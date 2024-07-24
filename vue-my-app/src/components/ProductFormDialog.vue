@@ -34,12 +34,12 @@
               :rules="[(v) => !!v || 'Image is required']"
               required
             ></v-file-input>
-            <v-btn type="submit" :disabled="!valid">{{ isEdit ? "Save" : "Add" }}</v-btn>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
+            <v-card-actions>
+              <v-btn type="submit" :disabled="!valid">{{ isEdit ? "Save" : "Add" }}</v-btn>
           <v-btn color="secondary" @click="localDialog = false">Cancel</v-btn>
         </v-card-actions>
+          </v-form>
+        </v-card-text>
       </v-card>
     </v-dialog>
   </template>

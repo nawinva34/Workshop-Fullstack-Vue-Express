@@ -9,7 +9,7 @@
           align-items: center;
         "
       >
-        <div style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center">
           <v-img
             alt="Vuetify Logo"
             class="shrink mr-3 mt-3"
@@ -18,18 +18,33 @@
             transition="scale-transition"
             width="70"
           />
-          <v-btn text @click="dashboard()">
-            <p class="title_name">Products</p>
-          </v-btn>
-          <v-btn @click="orders()" text>
-            <p class="title_name">Orders</p>
-          </v-btn>
         </div>
 
         <div class="mr-3 mt-3">
-          <v-btn @click="logout()" text>
+          <v-btn text class="no-hover">
             <span>{{ username }}</span>
           </v-btn>
+          <v-menu offset-y class="ml-3">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" text class="no-hover">
+                <v-icon>mdi-menu</v-icon>
+              </v-btn>
+            </template>
+            <v-list class="custom-menu">
+              <v-list-item @click="dashboard()" class="custom-menu-item">
+                <v-icon>mdi-view-dashboard</v-icon>
+                <v-list-item-title>Dashboard</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="orders()" class="custom-menu-item">
+                <v-icon>mdi-table</v-icon>
+                <v-list-item-title>Orders</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="logout()" class="custom-menu-item">
+                <v-icon>mdi-logout</v-icon>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </div>
     </v-app-bar>
@@ -52,14 +67,20 @@ export default {
   },
   methods: {
     logout() {
-      this.$router.push("/login");
-      localStorage.clear();
+      if (this.$route.path !== "/login") {
+        this.$router.push("/login");
+        localStorage.clear();
+      }
     },
     orders() {
-      this.$router.push("/orders");
+      if (this.$route.path !== "/orders") {
+        this.$router.push("/orders");
+      }
     },
     dashboard() {
-      this.$router.push("/dashboard");
+      if (this.$route.path !== "/dashboard") {
+        this.$router.push("/dashboard");
+      }
     },
   },
 };
@@ -67,7 +88,7 @@ export default {
 
 <style>
 .gradient-bar {
-  background: linear-gradient(45deg, #8e0e00, #1f1c18);
+  background: linear-gradient(15deg, #B81F20, #391717);
 }
 
 .title_name {
@@ -75,5 +96,19 @@ export default {
   padding-top: 30px;
   font-size: 24px;
   font-weight: 300;
+}
+
+.custom-menu {
+  width: 200px; /* Set the width of the menu */
+}
+
+.custom-menu-item {
+  width: 100%; /* Ensure the list items take up the full width of the menu */
+  display: flex;
+  align-items: center;
+}
+
+.custom-menu-item v-icon {
+  margin-right: 10px;
 }
 </style>

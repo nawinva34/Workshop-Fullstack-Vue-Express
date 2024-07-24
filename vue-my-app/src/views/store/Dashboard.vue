@@ -2,13 +2,18 @@
   <div class="dashboard">
     <v-container>
       <div
-        style="padding-bottom: 20px; display: flex; justify-content: flex-end"
+        style="display: flex; justify-content: flex-end; align-items: center;"
       >
-        <v-btn color="primary" @click="showAddProductDialog">Add Product</v-btn>
+      <v-text-field
+          v-model="searchTerm"
+          label="Search products"
+          class="mr-4"
+        ></v-text-field>
+        <v-btn style="color:aliceblue;" color="#B81F20" @click="showAddProductDialog">Add Product</v-btn>
       </div>
       <v-row>
         <v-col
-          v-for="product in products"
+          v-for="product in filteredProducts"
           :key="product._id"
           cols="12"
           sm="6"
@@ -135,6 +140,7 @@ export default {
   data() {
     return {
       products: [],
+      filteredProducts: [],
       addProductDialog: false,
       editProductDialog: false,
       deleteConfirmationDialog: false,
@@ -153,6 +159,8 @@ export default {
         message: "",
         timeout: 3000,
       },
+      searchTerm: "",
+      quantity: 1, 
     };
   },
   created() {
@@ -160,6 +168,17 @@ export default {
       this.$router.push("/login");
     } else {
       this.fetchProducts();
+    }
+  },
+  watch: {
+    searchTerm(newTerm) {
+      this.filterProducts(newTerm);
+    },
+    products: {
+      handler() {
+        this.filterProducts(this.searchTerm);
+      },
+      immediate: true,
     }
   },
   methods: {
@@ -175,13 +194,24 @@ export default {
           }
         );
         this.products = response.data.data;
+        this.filterProducts(this.searchTerm); 
+        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     },
+    filterProducts(term) {
+      const searchTerm = term ? term.toLowerCase() : '';
+      console.log("search",searchTerm)
+      console.log('filter',this.filteredProducts)
+      this.filteredProducts = this.products.filter(product =>
+        product.name.toLowerCase().includes(searchTerm)
+      );
+    },
     getProductImageUrl(filename) {
       return `http://localhost:3000/images/${filename}`;
     },
+
     showAddProductDialog() {
       this.newProduct = {
         name: "",
@@ -194,11 +224,11 @@ export default {
     },
     showEditProductDialog(product) {
       this.currentProduct = { ...product };
-      this.editProductDialog = true; // Ensure this property is reactive and defined in `data`
+      this.editProductDialog = true;
     },
     showDeleteConfirmation(productId) {
       this.productIdToDelete = productId;
-      this.deleteConfirmationDialog = true; // Ensure this property is reactive and defined in `data`
+      this.deleteConfirmationDialog = true;
     },
     cancelDelete() {
       this.deleteConfirmationDialog = false;
@@ -226,6 +256,7 @@ export default {
           }
         );
         this.products.push(response.data.data);
+        this.filterProducts(this.searchTerm); // Update filteredProducts after adding
         this.addProductDialog = false;
         this.snackbar.message = "Product added successfully!";
         this.snackbar.show = true;
@@ -252,6 +283,7 @@ export default {
         );
         const index = this.products.findIndex((p) => p._id === product._id);
         this.$set(this.products, index, response.data.data);
+        this.filterProducts(this.searchTerm); // Update filteredProducts after updating
         this.editProductDialog = false;
         this.snackbar.message = "Product updated successfully!";
         this.snackbar.show = true;
@@ -273,6 +305,7 @@ export default {
         this.products = this.products.filter(
           (product) => product._id !== this.productIdToDelete
         );
+        this.filterProducts(this.searchTerm); // Update filteredProducts after deleting
         this.deleteConfirmationDialog = false;
         this.snackbar.message = "Product deleted successfully!";
         this.snackbar.show = true;
@@ -302,7 +335,6 @@ export default {
         console.error("Error adding to cart:", error);
       }
     },
-
     cancelAddToCart() {
       this.selectedProduct = null;
       this.quantity = 1; // Reset quantity to default
@@ -324,6 +356,7 @@ export default {
 
 .dashboard {
   padding: 30px;
+  background-color: #f7f7f7;
 }
 
 .title {
