@@ -1,15 +1,25 @@
 <template>
   <div class="dashboard">
     <v-container>
+      <div style="margin-bottom: 80px;">
+        <Carousel/>
+      </div>
+
+      <h1 class="mt-10">Products</h1>
       <div
-        style="display: flex; justify-content: flex-end; align-items: center;"
+        style="display: flex; justify-content: flex-end; align-items: center"
       >
-      <v-text-field
+        <v-text-field
           v-model="searchTerm"
           label="Search products"
           class="mr-4"
         ></v-text-field>
-        <v-btn style="color:aliceblue;" color="#B81F20" @click="showAddProductDialog">Add Product</v-btn>
+        <v-btn
+          style="color: aliceblue"
+          color="#B81F20"
+          @click="showAddProductDialog"
+          >Add Product</v-btn
+        >
       </div>
       <v-row>
         <v-col
@@ -100,26 +110,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- Modal for confirming order
-      <v-dialog v-model="placeOrderDialog" max-width="400">
-        <v-card>
-          <v-card-title>Place Order</v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <p>Confirm your order for {{ selectedProduct?.name }}</p>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" @click="placeOrder">Place Order</v-btn>
-            <v-btn @click="cancelPlaceOrder">Cancel</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
-
       <v-snackbar v-model="snackbar.show" :timeout="snackbar.timeout">
         {{ snackbar.message }}
         <v-btn color="red" text @click="snackbar.show = false">Close</v-btn>
@@ -132,10 +122,12 @@
 import axios from "axios";
 import { isAuthenticated } from "@/helpers/auth";
 import ProductFormDialog from "@/components/ProductFormDialog.vue";
+import Carousel from "@/components/Carousel.vue";
 
 export default {
   components: {
     ProductFormDialog,
+    Carousel,
   },
   data() {
     return {
@@ -160,7 +152,7 @@ export default {
         timeout: 3000,
       },
       searchTerm: "",
-      quantity: 1, 
+      quantity: 1,
     };
   },
   created() {
@@ -179,7 +171,7 @@ export default {
         this.filterProducts(this.searchTerm);
       },
       immediate: true,
-    }
+    },
   },
   methods: {
     async fetchProducts() {
@@ -194,24 +186,23 @@ export default {
           }
         );
         this.products = response.data.data;
-        this.filterProducts(this.searchTerm); 
+        this.filterProducts(this.searchTerm);
         console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     },
     filterProducts(term) {
-      const searchTerm = term ? term.toLowerCase() : '';
-      console.log("search",searchTerm)
-      console.log('filter',this.filteredProducts)
-      this.filteredProducts = this.products.filter(product =>
+      const searchTerm = term ? term.toLowerCase() : "";
+      console.log("search", searchTerm);
+      console.log("filter", this.filteredProducts);
+      this.filteredProducts = this.products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm)
       );
     },
     getProductImageUrl(filename) {
       return `http://localhost:3000/images/${filename}`;
     },
-
     showAddProductDialog() {
       this.newProduct = {
         name: "",
@@ -356,7 +347,7 @@ export default {
 
 .dashboard {
   padding: 30px;
-  background-color: #f7f7f7;
+  /* background-color: #f7f7f7; */
 }
 
 .title {

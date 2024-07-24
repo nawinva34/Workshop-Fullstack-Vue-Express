@@ -14,9 +14,9 @@
             alt="Vuetify Logo"
             class="shrink mr-3 mt-3"
             contain
-            src="../../public/img/dog2.png"
+            src="../assets/logopage.png"
             transition="scale-transition"
-            width="70"
+            width="200"
           />
         </div>
 
@@ -88,7 +88,7 @@ export default {
 
 <style>
 .gradient-bar {
-  background: linear-gradient(15deg, #B81F20, #391717);
+  background: linear-gradient(15deg, #b81f20, #391717);
 }
 
 .title_name {
